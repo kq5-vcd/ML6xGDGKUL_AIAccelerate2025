@@ -4,7 +4,7 @@ The `root_agent` is used to evaluate your agent's performance.
 """
 
 from google.adk.agents import llm_agent
-from my_agent.tools import web_search, pdf_extract, read_png_as_string, text_processor
+from my_agent.tools import web_search, pdf_extract, text_processor, read_png
 from google.adk.tools import FunctionTool
 
 # Root agent instruction - routes to appropriate sub-agents
@@ -54,7 +54,7 @@ reasoning_agent = llm_agent.Agent(
     name='reasoning_agent',
     description="Specialized agent for logical puzzles, instruction following, grammar/translation, and chess problems.",
     instruction=REASONING_INSTRUCTION,
-    tools=[text_processor],
+    tools=[web_search, pdf_extract, text_processor, read_png],
     sub_agents=[],
 )
 
@@ -63,7 +63,7 @@ text_processing_agent = llm_agent.Agent(
     name='text_processing_agent',
     description="Specialized agent for external knowledge, facts, trivia, and word problems. Uses web search and text processing.",
     instruction=TEXT_PROCESSING_INSTRUCTION,
-    tools=[web_search, text_processor],
+    tools=[web_search, pdf_extract, text_processor, read_png],
     sub_agents=[],
 )
 
@@ -72,7 +72,7 @@ math_agent = llm_agent.Agent(
     name='math_agent',
     description="Specialized agent for mathematical calculations and quantitative problems. Can read PDFs for numeric data.",
     instruction=MATH_INSTRUCTION,
-    tools=[pdf_extract],
+    tools=[web_search, pdf_extract, text_processor, read_png],
     sub_agents=[],
 )
 
