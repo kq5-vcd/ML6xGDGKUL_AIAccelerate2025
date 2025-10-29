@@ -1,12 +1,12 @@
 {
-  "timestamp": "2025-10-29T16:32:46.430743",
+  "timestamp": "2025-10-29T17:05:42.701234",
   "total_questions": 10,
-  "correct": 8,
-  "incorrect": 2,
-  "accuracy": 80.0,
+  "correct": 6,
+  "incorrect": 4,
+  "accuracy": 60.0,
   "timing": {
-    "average_response_time": 16.16,
-    "average_correct_response_time": 14.35
+    "average_response_time": 29.21,
+    "average_correct_response_time": 12.77
   },
   "results": [
     {
@@ -16,7 +16,7 @@
       "agent_response": "Guava",
       "correct": true,
       "method": "string_match",
-      "response_time": 3.10803484916687
+      "response_time": 8.209734916687012
     },
     {
       "question_idx": 1,
@@ -25,7 +25,7 @@
       "agent_response": "Maktay Mato Apple",
       "correct": true,
       "method": "string_match",
-      "response_time": 2.6442320346832275
+      "response_time": 8.625257015228271
     },
     {
       "question_idx": 2,
@@ -34,16 +34,16 @@
       "agent_response": "100",
       "correct": true,
       "method": "string_match",
-      "response_time": 11.036235094070435
+      "response_time": 14.564560890197754
     },
     {
       "question_idx": 3,
       "question": "In Series 9, Episode 11 of Doctor Who, the Doctor is trapped inside an ever-shifting maze. What is this location called in the official script for the episode? Give the setting exactly as it appears in the first scene heading.",
       "expected_answer": "THE CASTLE",
-      "agent_response": "1 INT. THE CASTLE - DAY",
-      "correct": true,
+      "agent_response": "Castle",
+      "correct": false,
       "method": "llm_judge",
-      "response_time": 48.873388051986694
+      "response_time": 61.21795201301575
     },
     {
       "question_idx": 4,
@@ -52,34 +52,34 @@
       "agent_response": "The seagull glided peacefully to my chair.",
       "correct": true,
       "method": "string_match",
-      "response_time": 2.4593117237091064
+      "response_time": 14.554136037826538
     },
     {
       "question_idx": 5,
       "question": "As a comma separated list with no whitespace, using the provided image provide all the fractions that use / as the fraction line and the answers to the sample problems. Order the list by the order in which the fractions appear.",
       "expected_answer": "3/4,1/4,3/4,3/4,2/4,1/2,5/35,7/21,30/5,30/5,3/4,1/15,1/3,4/9,1/8,32/23,103/170",
-      "agent_response": "3/4,2/4,30/5,2/4,1/2,6/8,4/60,30/90,8/18,9/72,64/46,206/340,3/4,1/15,1/3,4/9,1/8,32/23,103/170",
+      "agent_response": "1/4,3/4,1/4,3/4,1/2,2/4,30/5,2/4,1/2,6/8,4/60,30/90,8/18,9/72,64/46,206/340,3/4,1/15,1/3,4/9,1/8,32/23,103/170",
       "correct": false,
       "method": "llm_judge",
-      "response_time": 13.142883777618408
+      "response_time": 32.189769983291626
     },
     {
       "question_idx": 6,
       "question": "I have the Standard plan in the image below, and I just uploaded 60 equally sized files and got a message that I'm 100GB over the limit. I have 980 more files of the same size to upload. What is the average additional cost per file in dollar that goes over my current plan limit rounded to the nearest cent if I have to upgrade to the minimum possible plan to store them all? Answer with the following format: x.xx",
       "expected_answer": "0.03",
-      "agent_response": "0.03",
-      "correct": true,
-      "method": "string_match",
-      "response_time": 29.067626953125
+      "agent_response": "Here is a step-by-step breakdown of the calculation:\n\n1.  **Determine the file size:**\n    The problem states that uploading 60 equally sized files resulted in a 100 GB overage on the Standard plan. The most direct interpretation is that the user was at their 2 TB limit, and the 60 files added 100 GB of data.\n    *   Size per file = 100 GB / 60 files = 5/3 GB/file.\n\n2.  **Calculate the total storage required:**\n    The user needs to store the files they already have (which are at the 2 TB limit) plus all the new files (60 uploaded + 980 pending).\n    *   Total number of new files = 60 + 980 = 1,040 files.\n    *   Total size of new files = 1,040 files * (5/3 GB/file) \u2248 1733.33 GB.\n    *   The Standard plan's limit is 2 TB, which is 2 * 1024 = 2048 GB.\n    *   Total storage needed = 2048 GB (current usage) + 1733.33 GB (new files) = 3781.33 GB.\n\n3.  **Determine the minimum required plan:**\n    We need to find the smallest plan that can hold 3781.33 GB.\n    *   Standard Plan: 2 TB = 2048 GB (not enough)\n    *   Plus Plan: 10 TB = 10240 GB (enough)\n    The minimum possible plan is the **Plus Plan**.\n\n4.  **Calculate the additional cost:**\n    The user must upgrade from the Standard to the Plus plan.\n    *   Standard Plan cost = $9.99/month\n    *   Plus Plan cost = $19.99/month\n    *   Additional monthly cost = $19.99 - $9.99 = $10.00.\n\n5.  **Calculate the average additional cost per file:**\n    The additional cost of $10.00 is to accommodate the 1,040 new files that are over the original plan's limit.\n    *   Average cost per file = $10.00 / 1,040 files \u2248 $0.009615...\n\n6.  **Round to the nearest cent:**\n    *   Rounding $0.009615... to the nearest cent gives $0.01.\n\n0.01",
+      "correct": false,
+      "method": "llm_judge",
+      "response_time": 73.09482288360596
     },
     {
       "question_idx": 7,
       "question": "Review the chess position provided in the image. It is black's turn. Provide the correct next move for black which guarantees a win. Please provide your response in algebraic notation.",
       "expected_answer": "Rd5",
-      "agent_response": "Checkmate",
+      "agent_response": "Qxc3+",
       "correct": false,
       "method": "llm_judge",
-      "response_time": 33.62901520729065
+      "response_time": 49.02598690986633
     },
     {
       "question_idx": 8,
@@ -88,16 +88,16 @@
       "agent_response": "7",
       "correct": true,
       "method": "string_match",
-      "response_time": 6.186613082885742
+      "response_time": 10.452784776687622
     },
     {
       "question_idx": 9,
       "question": "The attached file lists accommodations in the resort town of Seahorse Island. Based on the information in this file, which seems like the better available place to stay for a family that enjoys swimming and wants a full house?",
       "expected_answer": "Shelley's place",
-      "agent_response": "Shelley's Place",
+      "agent_response": "Based on the information in the provided file, **Shelley's Place** seems to be the best available option for a family that enjoys swimming and wants a full house.\n\nHere's a breakdown of why:\n\n*   **Full House:** Shelley's Place is listed under the \"Rental Houses\" category.\n*   **Swimming:** It has a pool.\n*   **Availability:** The file indicates that it has a vacancy.\n\nWhile the sample review mentions that \"The floorboards creaked too loud!\", it is the only rental house with a vacancy that also has a pool. Another option, Headrush Beach, has a private beach but no vacancy.",
       "correct": true,
-      "method": "string_match",
-      "response_time": 11.434837818145752
+      "method": "llm_judge",
+      "response_time": 20.189849138259888
     }
   ]
 }

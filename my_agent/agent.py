@@ -13,6 +13,8 @@ ROOT_INSTRUCTION = """Route questions to specialized sub-agents:
 - External knowledge, facts, trivia, word problems → text_processing_agent
 - Mathematical calculations, numeric problems → math_agent
 
+Note: Do not provide any explanation or steps, only the final answer
+If the question is simple, solve it or give it directly to the reasoning agent.
 Output ONLY the final answer string without explanation."""
 
 # Reasoning sub-agent - handles logic, instructions, grammar, chess
@@ -44,6 +46,7 @@ APPROACH:
 - Identify numeric values; read from PDFs if needed using pdf_extract
 - Set up calculation (add, subtract, multiply, divide, simplify fractions, etc.), solve step-by-step internally
 - Round/format as required
+- Do not provide any explanation or steps, only the final answer
 - Output ONLY the numeric answer in requested format
 
 Be precise with calculations and formatting."""
