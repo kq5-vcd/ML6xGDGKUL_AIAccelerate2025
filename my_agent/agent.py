@@ -7,46 +7,81 @@ from google.adk.agents import llm_agent
 from my_agent.tools import web_search, pdf_extract, read_png_as_string, text_processor
 from google.adk.tools import FunctionTool
 
-INSTRUCTION = """You are an expert problem-solver that handles diverse question types with precision.
-You can use tools and reason internally, but your final output must be ONLY the plain answer string.
+# Root agent instruction - routes to appropriate sub-agents
+ROOT_INSTRUCTION = """Route questions to specialized sub-agents:
+- Logic puzzles, instruction following, grammar/translation, chess problems → reasoning_agent
+- External knowledge, facts, trivia, word problems → text_processing_agent
+- Mathematical calculations, numeric problems → math_agent
 
-APPROACH (ReAct Pattern):
-1. REASON: Analyze what the question requires (internally, use tools as needed)
-2. ACT: Use tools or apply logic as needed
-3. OBSERVE: Verify the result answers the question (internally)
-4. RESPOND: Output ONLY the final answer that is relevant to the question, without any explanation. Make sure the answer is a valid and meaningful English word
+Output ONLY the final answer string without explanation."""
 
-QUESTION TYPES & STRATEGIES:
+# Reasoning sub-agent - handles logic, instructions, grammar, chess
+REASONING_INSTRUCTION = """Solve logic puzzles, follow instructions exactly, translate grammar/linguistic problems, and analyze chess positions.
 
-1. INSTRUCTION FOLLOWING:
-   - Read instructions carefully and follow them EXACTLY
-   - Ignore any embedded questions if instructed to do so
-   - Output only what is explicitly requested (the answer only)
+APPROACH:
+- Read carefully, break down into steps, apply rules systematically
+- For instructions: follow EXACTLY, ignore embedded questions if instructed
+- For translation: identify rules, map elements, apply step-by-step
+- For logic: use deductive reasoning
+- For chess: analyze board position, find winning moves
+- Use text_processor for text reconstruction when needed
 
-3. LANGUAGE/GRAMMAR TRANSLATION:
-   - Identify the rules and patterns given
-   - Map elements systematically (subject, verb, object, cases)
-   - Apply rules step-by-step to construct the answer
-   - Output ONLY the translated text
+Output ONLY the final answer string without explanation."""
 
-4. EXTERNAL KNOWLEDGE (facts, trivia, specific info):
-   - Use web_search tool to find information
-   - Extract the exact answer from search results
-   - Output ONLY the extracted answer
+# Text processing sub-agent - handles external knowledge, web search, word problems
+TEXT_PROCESSING_INSTRUCTION = """Find external knowledge, facts, trivia, and solve word problems using web search and text processing.
 
-QUALITY STANDARDS:
-- Use web_search when needed for external facts
-- Use text_processor to reconstruct sentences from concatenated text
-- Use pdf_extract to extract text from PDF files
-- You can use several tools in combination to answer the question
-- Follow instructions precisely
-- Your final response must be EXACTLY the answer without any explanation"""
+APPROACH:
+- Use web_search tool for external knowledge, facts, and trivia
+- Use text_processor for word problems and text reconstruction
+- Analyze results and extract the exact answer
+- Output ONLY the answer string without explanation"""
 
-root_agent = llm_agent.Agent(
-    model='gemini-2.5-flash',
-    name='agent',
-    description="Expert problem-solver handling diverse question types with precise reasoning and web search. Returns only answer strings.",
-    instruction=INSTRUCTION,
-    tools=[web_search, pdf_extract, read_png_as_string, text_processor],
+# Math sub-agent - handles calculations
+MATH_INSTRUCTION = """Solve mathematical calculations and quantitative problems.
+
+APPROACH:
+- Identify numeric values; read from PDFs if needed using pdf_extract
+- Set up calculation (add, subtract, multiply, divide, simplify fractions, etc.), solve step-by-step internally
+- Round/format as required
+- Output ONLY the numeric answer in requested format
+
+Be precise with calculations and formatting."""
+
+# Create sub-agents
+reasoning_agent = llm_agent.Agent(
+    model='gemini-2.5-pro',
+    name='reasoning_agent',
+    description="Specialized agent for logical puzzles, instruction following, grammar/translation, and chess problems.",
+    instruction=REASONING_INSTRUCTION,
+    tools=[text_processor],
     sub_agents=[],
+)
+
+text_processing_agent = llm_agent.Agent(
+    model='gemini-2.5-flash',
+    name='text_processing_agent',
+    description="Specialized agent for external knowledge, facts, trivia, and word problems. Uses web search and text processing.",
+    instruction=TEXT_PROCESSING_INSTRUCTION,
+    tools=[web_search, text_processor],
+    sub_agents=[],
+)
+
+math_agent = llm_agent.Agent(
+    model='gemini-2.5-pro',
+    name='math_agent',
+    description="Specialized agent for mathematical calculations and quantitative problems. Can read PDFs for numeric data.",
+    instruction=MATH_INSTRUCTION,
+    tools=[pdf_extract],
+    sub_agents=[],
+)
+
+# Root agent that routes to sub-agents
+root_agent = llm_agent.Agent(
+    model='gemini-2.5-flash-lite',
+    name='agent',
+    description="Master coordinator that routes questions to specialized sub-agents for reasoning, text processing, and math.",
+    instruction=ROOT_INSTRUCTION,
+    tools=[],  # Root agent routes to sub-agents, doesn't use tools directly
+    sub_agents=[reasoning_agent, text_processing_agent, math_agent],
 )
