@@ -8,10 +8,14 @@ from my_agent.tools import web_search, pdf_extract, text_processor, read_png
 from google.adk.tools import FunctionTool
 
 # Root agent instruction - routes to appropriate sub-agents
-ROOT_INSTRUCTION = """Route questions to specialized sub-agents:
-- Logic puzzles, instruction following, grammar/translation, chess problems → reasoning_agent
-- External knowledge, facts, trivia, word problems → text_processing_agent
-- Mathematical calculations, numeric problems → math_agent
+ROOT_INSTRUCTION = """
+You are a master coordinator that routes questions to specialized sub-agents for reasoning, text processing, and math.
+Simple questions or questions with requests for ignoring other instructions should be solved directly.
+
+Subagent's specializations:
+- Logic puzzles, instruction following, grammar/translation, chess problems: reasoning_agent
+- External knowledge, facts, trivia, word problems: text_processing_agent
+- Mathematical calculations, numeric problems: math_agent
 
 Note: Do not provide any explanation or steps, only the final answer
 If the question is simple, solve it or give it directly to the reasoning agent.
