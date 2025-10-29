@@ -11,39 +11,27 @@ from typing import Dict, Any, List
 dotenv_path = Path(__file__).parent.parent / ".local_env"
 dotenv.load_dotenv(dotenv_path)
 
-# Config
-#SERP_API_KEY = "86a458c9d4ca871b4e1d1d3e3d00620cf6c85abc9b58b26535fe9b2675defb1d"
-SERP_API_KEY = os.getenv("SERPER_API_KEY")
+SERP_API_KEY = os.getenv("SERP_API_KEY")
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
-
 
 # Initialize Gemini client
 client = genai.Client(api_key=GOOGLE_API_KEY)
 
 # Prompts
 QUERY_TRANSFORM_PROMPT = """Transform questions into effective search queries.
-
-Rules:
-1. Remove generic question words (what, who, where, when, why, how)
-2. KEEP source/authority words: script, official, documentation, specification, manual
-3. KEEP identity/descriptor words: name, called, location, titled, referred to as
-4. KEEP technical terms, proper nouns, and unique identifiers exactly as stated
-5. KEEP episode/chapter/section numbers and specific references
-
-Goal: Create queries that would appear in authoritative sources answering this question.
+Remove question words and focus on key terms. 
+Identify the most important entity and supporting terms of the question and make sure to put them in the proper order.
 
 Examples:
-"What is the capital of Turkey?" → "capital France"
-"What is caffeine's molecular formula?" → "caffeine molecular formula"
-"In the Python docs, what's the exception handling method?" → "Python documentation exception handling method"
-"
-
+"What is the capital of Turkey?" → key information: capital, supporting information: Turkey -> query: capital of Turkey
+"What is caffeine's molecular formula?" → key information: molecular formula, supporting information: caffeine -> query: molecular formula of caffeine
+"In the Python docs, what's the exception handling method?" → key information: exception handling method, supporting information: Python documentation -> query: Python exception handling method 
+"In BoJack Horseman, what is the name of the teacher of Princess Carolyn's future descendant?" -> key information: name of the teacher, supporting information: BoJack Horseman, Princess Carolyn's future descendant -> query: Princess Carolyn's future descendant name of the teacher    
 Transform this question:"""
 
 ANSWER_EXTRACTION_PROMPT = """Answer the question based only on the provided context.
 Be concise and direct. If the context contains the exact answer, quote it directly.
 Pay special attention to names, locations, and specific terminology mentioned in the context.
-If you can't answer with confidence based on the context, say "I don't have enough information."
 Don't make up information or draw conclusions not supported by the context."""
 
 # Core helper
@@ -58,26 +46,12 @@ def extract(prompt: str, content: str, model: str = "gemini-2.5-flash") -> str:
         print(f"Error in extract: {e}")
         return ""
 
-def transform_query(question: str) -> str:
-    """Transform question to concise search query, focusing on key terms."""
+def generate_search_query(question: str) -> str:
     try:
-        # Use the model for query transformation
         result = extract(QUERY_TRANSFORM_PROMPT, question, model="gemini-2.5-flash")
-
-        # If result is too long (over 10 words), try to shorten it
-        words = result.split()
-        if len(words) > 10:
-            # Keep only essential terms
-            result = " ".join(words[:10])
-
-        return result if result else question.replace("?", "").strip()
+        return result
     except Exception as e:
         print(f"Error in transform_query: {e}")
-        # Simple fallback - extract key nouns and proper nouns
-        words = question.replace("?", "").split()
-        # Keep words that start with uppercase (likely proper nouns) and longer words
-        important_words = [w for w in words if (w[0].isupper() if w else False) or len(w) > 5]
-        return " ".join(important_words[:7]) if important_words else question.replace("?", "").strip()
 
 def search_google(query: str) -> Dict[str, Any]:
     try:
@@ -152,9 +126,8 @@ def extract_answer(question: str, snippets: List[Dict[str, str]]) -> str:
     return answer if answer else "Could not extract answer."
 
 def web_search(query: str) -> Dict[str, Any]:
-    """Performs web search and returns results with extracted answer."""
     try:
-        search_query = transform_query(query)
+        search_query = generate_search_query(query)
         print(f"Query: '{query}' → '{search_query}'")
 
         search_results = search_google(search_query)
