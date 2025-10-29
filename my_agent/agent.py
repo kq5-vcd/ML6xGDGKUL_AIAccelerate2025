@@ -7,10 +7,10 @@ from google.adk.agents import llm_agent
 from my_agent.tools import web_search
 
 root_agent = llm_agent.Agent(
-    model='gemini-2.5-flash-lite',
+    model='gemini-2.5-flash-lite', #TODO
     name='agent',
     description="A helpful assistant that can answer questions.",
-    instruction="You are a helpful assistant that answers questions directly and concisely.",
-    tools=[web_search],
+    instruction="You are a helpful assistant that answers questions directly and concisely.",  # TODO
+    tools=[web_search],  # TODO
     sub_agents=[],
 )

@@ -12,3 +12,5 @@ __pycache__/
 
 # Mac dsstore files
 .DS_Store
+/.idea
+uv.lock
