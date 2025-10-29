@@ -8,8 +8,7 @@ from pathlib import Path
 from typing import Dict, Any, List
 
 # Load environment variables
-dotenv_path = Path(__file__).parent.parent / ".local_env"
-dotenv.load_dotenv(dotenv_path)
+dotenv.load_dotenv()
 
 SERP_API_KEY = os.getenv("SERP_API_KEY")
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
@@ -19,13 +18,11 @@ client = genai.Client(api_key=GOOGLE_API_KEY)
 
 # Prompts
 QUERY_TRANSFORM_PROMPT = """Transform questions into effective search queries.
-Remove question words and focus on key terms. 
-Identify the most important entity we need to search for and supporting terms of the question and make sure to put them in the proper order."""
+Remove question words and focus on key terms."""
 
 ANSWER_EXTRACTION_PROMPT = """Answer the question based only on the provided context.
-Be concise and direct. If the context contains the exact answer, quote it directly.
-Pay special attention to names, locations, and specific terminology mentioned in the context.
-Don't make up information or draw conclusions not supported by the context."""
+Answer format: only extract the meaningful English word from the context and relevant to the question.
+"""
 
 # Core helper
 def extract(prompt: str, content: str, model: str = "gemini-2.5-flash") -> str:
@@ -41,7 +38,7 @@ def extract(prompt: str, content: str, model: str = "gemini-2.5-flash") -> str:
 
 def generate_search_query(question: str) -> str:
     try:
-        result = extract(QUERY_TRANSFORM_PROMPT, question, model="gemini-2.5-flash")
+        result = extract(QUERY_TRANSFORM_PROMPT, question, model="gemini-2.5-pro")
         return result
     except Exception as e:
         print(f"Error in transform_query: {e}")
@@ -114,7 +111,7 @@ def extract_answer(question: str, snippets: List[Dict[str, str]]) -> str:
     context = "\n\n".join(context_parts)
     content = f"Question: {question}\n\nContext:\n{context}"
 
-    answer = extract(ANSWER_EXTRACTION_PROMPT, content, model="gemini-2.5-flash")
+    answer = extract(ANSWER_EXTRACTION_PROMPT, content)
 
     return answer if answer else "Could not extract answer."
 
