@@ -20,14 +20,7 @@ client = genai.Client(api_key=GOOGLE_API_KEY)
 # Prompts
 QUERY_TRANSFORM_PROMPT = """Transform questions into effective search queries.
 Remove question words and focus on key terms. 
-Identify the most important entity and supporting terms of the question and make sure to put them in the proper order.
-
-Examples:
-"What is the capital of Turkey?" → key information: capital, supporting information: Turkey -> query: capital of Turkey
-"What is caffeine's molecular formula?" → key information: molecular formula, supporting information: caffeine -> query: molecular formula of caffeine
-"In the Python docs, what's the exception handling method?" → key information: exception handling method, supporting information: Python documentation -> query: Python exception handling method 
-"In BoJack Horseman, what is the name of the teacher of Princess Carolyn's future descendant?" -> key information: name of the teacher, supporting information: BoJack Horseman, Princess Carolyn's future descendant -> query: Princess Carolyn's future descendant name of the teacher    
-Transform this question:"""
+Identify the most important entity we need to search for and supporting terms of the question and make sure to put them in the proper order."""
 
 ANSWER_EXTRACTION_PROMPT = """Answer the question based only on the provided context.
 Be concise and direct. If the context contains the exact answer, quote it directly.
@@ -126,6 +119,15 @@ def extract_answer(question: str, snippets: List[Dict[str, str]]) -> str:
     return answer if answer else "Could not extract answer."
 
 def web_search(query: str) -> Dict[str, Any]:
+    """
+    Search the web for the given query and return the results.
+
+    Args:
+        query: The query to search for.
+
+    Returns:
+        A dictionary containing the search query, results, and answer.
+    """
     try:
         search_query = generate_search_query(query)
         print(f"Query: '{query}' → '{search_query}'")
@@ -159,7 +161,8 @@ def web_search(query: str) -> Dict[str, Any]:
 if __name__ == "__main__":
     test_questions = [
         "In Series 9, Episode 11 of Doctor Who, the Doctor is trapped inside an ever-shifting maze. What is this location called in the official script for the episode?",
-        "What is the capital of France?",
+        #"What is the capital of France?",
+        #"What is the name of the teacher of Princess Carolyn's future descendant?",
     ]
 
     for question in test_questions:
