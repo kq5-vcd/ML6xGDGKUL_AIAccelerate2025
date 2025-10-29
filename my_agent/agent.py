@@ -4,8 +4,7 @@ The `root_agent` is used to evaluate your agent's performance.
 """
 
 from google.adk.agents import llm_agent
-from my_agent.tools import web_search, pdf_extract, text_processor, read_png
-from google.adk.tools import FunctionTool
+from my_agent.tools import web_search, pdf_extract, text_processor, read_png, download_file, remove_file
 
 # Root agent instruction - routes to appropriate sub-agents
 ROOT_INSTRUCTION = """
@@ -31,6 +30,7 @@ APPROACH:
 - For logic: use deductive reasoning
 - For chess: analyze board position, find winning moves
 - Use text_processor for text reconstruction when needed
+- If file download is required, use the download_file tool to download the file, extract with pdf_extract tool, and remove the file when you are done.
 
 Output ONLY the final answer string without explanation."""
 
@@ -41,7 +41,8 @@ APPROACH:
 - Use web_search tool for external knowledge, facts, and trivia
 - Use text_processor for word problems and text reconstruction
 - Analyze results and extract the exact answer
-- Output ONLY the answer string without explanation"""
+- Output ONLY the answer string without explanation
+- If file download is required, use the download_file tool to download the file, extract with pdf_extract tool, and remove the file when you are done"""
 
 # Math sub-agent - handles calculations
 MATH_INSTRUCTION = """Solve mathematical calculations and quantitative problems.
@@ -52,6 +53,7 @@ APPROACH:
 - Round/format as required
 - Do not provide any explanation or steps, only the final answer
 - Output ONLY the numeric answer in requested format
+- If file download is required, use the download_file tool to download the file, extract with pdf_extract tool, and remove the file when you are done.
 
 Be precise with calculations and formatting."""
 
@@ -61,7 +63,7 @@ reasoning_agent = llm_agent.Agent(
     name='reasoning_agent',
     description="Specialized agent for logical puzzles, instruction following, grammar/translation, and chess problems.",
     instruction=REASONING_INSTRUCTION,
-    tools=[web_search, pdf_extract, text_processor, read_png],
+    tools=[web_search, pdf_extract, text_processor, read_png, download_file, remove_file],
     sub_agents=[],
 )
 
@@ -70,7 +72,7 @@ text_processing_agent = llm_agent.Agent(
     name='text_processing_agent',
     description="Specialized agent for external knowledge, facts, trivia, and word problems. Uses web search and text processing.",
     instruction=TEXT_PROCESSING_INSTRUCTION,
-    tools=[web_search, pdf_extract, text_processor, read_png],
+    tools=[web_search, pdf_extract, text_processor, read_png, download_file, remove_file],
     sub_agents=[],
 )
 
@@ -79,7 +81,7 @@ math_agent = llm_agent.Agent(
     name='math_agent',
     description="Specialized agent for mathematical calculations and quantitative problems. Can read PDFs for numeric data.",
     instruction=MATH_INSTRUCTION,
-    tools=[web_search, pdf_extract, text_processor, read_png],
+    tools=[web_search, pdf_extract, text_processor, read_png, download_file, remove_file],
     sub_agents=[],
 )
 

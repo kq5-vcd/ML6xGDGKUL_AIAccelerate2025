@@ -1,14 +1,16 @@
 
 
 import os
+import dotenv
 
 from google import genai
 from google.genai import types
 
+# Load environment variables from .env file
+dotenv.load_dotenv()
+
 api_key = os.getenv("GOOGLE_API_KEY")
-client = None
-if api_key:
-    client = genai.Client(api_key=api_key)
+client = genai.Client(api_key=api_key) if api_key else None
 
 def read_png(file_path: str) -> str:
     """Reads a PNG file and returns the content as a string.
@@ -22,6 +24,12 @@ def read_png(file_path: str) -> str:
         str: The content of the file.
     """
     # TODO: Improve this function and add functions for other types.
+    if client is None:
+        raise ValueError(
+            "GOOGLE_API_KEY environment variable is not set. "
+            "Please set it before using this function."
+        )
+
     with open(file_path, 'rb') as file:
         file_content = file.read()
 
@@ -37,3 +45,6 @@ def read_png(file_path: str) -> str:
     )
 
     return response.text
+
+if __name__ == "__main__":
+    print(read_png("benchmark/attachments/11.png"))
