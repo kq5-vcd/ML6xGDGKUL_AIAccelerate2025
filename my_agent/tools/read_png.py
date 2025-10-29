@@ -10,7 +10,7 @@ client = None
 if api_key:
     client = genai.Client(api_key=api_key)
 
-def read_png_as_string(file_path: str) -> str:
+def read_png(file_path: str) -> str:
     """Reads a PNG file and returns the content as a string.
     If you are provided a file path to a .PNG file, you MUST invoke this tool to
     read the file and use the content to answer the question.
