@@ -13,6 +13,9 @@ dotenv.load_dotenv()
 SERP_API_KEY = os.getenv("SERP_API_KEY")
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 
+# Timeout configuration (in seconds)
+REQUEST_TIMEOUT = 180
+
 # Initialize Gemini client
 client = genai.Client(api_key=GOOGLE_API_KEY)
 
@@ -45,7 +48,7 @@ def generate_search_query(question: str) -> str:
 
 def search_google(query: str) -> Dict[str, Any]:
     try:
-        search = GoogleSearch({"q": query, "api_key": SERP_API_KEY, "num": 10})
+        search = GoogleSearch({"q": query, "api_key": SERP_API_KEY, "num": 10, "timeout": REQUEST_TIMEOUT})
         return search.get_dict()
     except Exception as e:
         print(f"Error searching: {e}")
@@ -53,7 +56,7 @@ def search_google(query: str) -> Dict[str, Any]:
 
 def get_ai_overview(query: str) -> List[str]:
     try:
-        search = GoogleSearch({"q": query, "api_key": SERP_API_KEY})
+        search = GoogleSearch({"q": query, "api_key": SERP_API_KEY, "timeout": REQUEST_TIMEOUT})
         results = search.get_dict()
 
         if "ai_overview" not in results or "page_token" not in results["ai_overview"]:
@@ -62,7 +65,8 @@ def get_ai_overview(query: str) -> List[str]:
         ai_search = GoogleSearch({
             "engine": "google_ai_overview",
             "page_token": results["ai_overview"]["page_token"],
-            "api_key": SERP_API_KEY
+            "api_key": SERP_API_KEY,
+            "timeout": REQUEST_TIMEOUT
         })
         ai_results = ai_search.get_dict()
 
